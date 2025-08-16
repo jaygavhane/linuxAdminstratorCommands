@@ -1,0 +1,5 @@
+
+
+adding user into sudoers group -- sudo usermod -aG sudo joker
+Adding the user a bin/bash shell --- sudo usermod -s /bin/bash joker
+sudo grep -w 'joker' /etc/passwd
