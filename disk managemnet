@@ -1,0 +1,9 @@
+df -h -- to check disk space
+du -sh /var/file
+du - disk usage
+-sh - s summary -h human redable 
+  /var/file -- filr
+free --- is chek ram space
+  ps aux -- to chek snapshot of runing processes
+  top and htop -------- live monitoring for cpu usase disk usesage and pid for the process
+
