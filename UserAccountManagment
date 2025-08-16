@@ -3,3 +3,22 @@
 adding user into sudoers group -- sudo usermod -aG sudo joker
 Adding the user a bin/bash shell --- sudo usermod -s /bin/bash joker
 sudo grep -w 'joker' /etc/passwd
+sudo usermod -aG devops rahul --- this will add rahul user into devops group
+--------------------------
+Using nc (netcat):
+nc -zv 192.168.1.10 22
+-z → scan without sending data
+-v → verbose, shows result
+nc -zv 192.168.1.10 22 -- to check the 22 port is open for 192.168.1.10 or not
+----------
+ ss -tuln  ----------- to check the port services on the system
+-------------------
+Using nmap:
+
+nmap -p 22 192.168.1.10
+
+
+These commands will tell you if the port is open and reachable on the remote host.
+-------------------------------------------------------------------------
+
+
