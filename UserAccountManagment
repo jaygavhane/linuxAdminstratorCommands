@@ -21,4 +21,17 @@ nmap -p 22 192.168.1.10
 These commands will tell you if the port is open and reachable on the remote host.
 -------------------------------------------------------------------------
 
+Summary
+Congratulations! You've completed the Linux User Group and File Permissions lab. You've learned how to:
+
+View user information
+Create new users and understand primary groups
+Explore and modify user groups
+Create new groups and add users to them
+Grant sudo privileges to users
+View and understand file permissions
+Change file ownership
+Modify file permissions
+These skills are fundamental for managing users and securing files in a Linux environment. 
+As you continue your Linux journey, you'll find these concepts essential for system administration and security.
 
