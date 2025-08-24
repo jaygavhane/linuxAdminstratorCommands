@@ -1,0 +1,9 @@
+find ~ -size +1M
+This should list any files larger than 1MB in your home directory.
+
+find ~ -mtime -1
+We can also use find to search for files modified within a certain time frame. Let's find files in your home directory that were modified in the last 24 hours:
+
+how to find a file
+find /etc -name "souce.file"
+
