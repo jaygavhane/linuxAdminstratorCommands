@@ -7,3 +7,17 @@ We can also use find to search for files modified within a certain time frame. L
 how to find a file
 find /etc -name "souce.file"
 
+how to create enviroment variable
+my_var="This is my var variable"
+export My_env="This is actual way to creat env"
+to see the created env variable use
+env --- this command
+
+export PATH="$PATH:$HOME/my_scripts"  --- this is to make you folder in the enviroment path 
+labex:project/ $ cat << 'EOF' > ~/my_scripts/hello.sh
+#!/bin/bahs
+heredoc> #!/bin/bash
+heredoc> echo "Hello from my custom script!"
+heredoc> EOF
+
+i can run hello.sh file from any where
