@@ -1,0 +1,668 @@
+Introduction
+Welcome to this hands-on lab about environment variables in Linux! Environment variables are dynamic values that can affect the behavior of running processes on a computer. They play a crucial role in system configuration and program execution. By mastering environment variables, you'll gain essential skills for Linux system administration and software development.
+
+In this lab, you'll learn how to create, view, modify, and delete environment variables. We'll also explore how to make these changes permanent and understand some of the most important built-in environment variables in Linux. Whether you're a beginner or looking to solidify your understanding, this lab will provide valuable hands-on experience.
+
+Let's get started!
+
+This is a Guided Lab, which provides step-by-step instructions to help you learn and practice. Follow the instructions carefully to complete each step and gain hands-on experience. Historical data shows that this is a beginner level lab with a 89% completion rate. It has received a 99% positive review rate from learners.
+labby
+Labby
+Great! Let me prepare the lab VM for you. While it's being set up, you can start reviewing the first step of this lab.
+
+labby
+Labby
+Understanding Variables in Linux
+Before we dive into environment variables, let's start with basic shell variables. This will help you understand the concept of variables in Linux.
+
+Open your terminal. You should be in the /home/labex/project directory. If not, you can change to this directory using the following command:
+
+cd /home/labex/project
+ Explain Code
+Now, let's create a simple shell variable. In Linux, you can create a variable by simply assigning a value to a name. Let's create a variable named my_var:
+
+my_var="Hello, Linux"
+ Explain Code
+Important Note: When assigning variables in Bash (and Zsh, which we're using in this lab), there should be no spaces around the equals sign (=). my_var = "Hello, Linux" or my_var= "Hello, Linux" will cause an error.
+
+To view the value of the variable, we use the echo command with a $ before the variable name. The $ tells the shell to substitute the value of the variable:
+
+echo $my_var
+ Explain Code
+You should see the output:
+
+Hello, Linux
+ Explain Code
+You can also use variables within other commands or assignments. For example:
+
+echo "The value of my_var is: $my_var"
+ Explain Code
+This will output: The value of my_var is: Hello, Linux
+
+Great job! You've just created and used your first shell variable. However, this variable is only available in the current shell session. If you open a new terminal window or tab, this variable won't be available there. This is where environment variables come in handy.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify variable creation and echo
+Continue
+
+labby
+Labby
+Great!
+It's time for the next step.
+
+labby
+Labby
+Introduction to Environment Variables
+Now that we understand basic variables, let's explore environment variables. Environment variables are variables that are available to any child process of the shell. This means they can be accessed by scripts and programs run from that shell.
+
+To view all current environment variables, use the env command:
+
+env
+ Explain Code
+This will display a long list of variables. Don't worry if you don't understand all of them yet - we'll cover some of the most important ones later.
+
+One of the most important environment variables is PATH. Let's take a look at it:
+
+echo $PATH
+ Explain Code
+The PATH variable lists directories where the system looks for executable programs. Each directory is separated by a colon (:).
+
+Now, let's create our own environment variable. We use the export command to create an environment variable:
+
+export MY_ENV_VAR="This is an environment variable"
+ Explain Code
+The export command makes the variable available to child processes. This is the key difference between shell variables and environment variables.
+
+To illustrate the difference, let's create a shell script that tries to access both a regular shell variable and an environment variable. We can do this using a heredoc with the cat command, which is a common way to write multi-line content to a file:
+
+cat << 'EOF' > test_vars.sh
+#!/bin/bash
+echo "Shell variable: $my_var"
+echo "Environment variable: $MY_ENV_VAR"
+EOF
+ Explain Code
+Make the script executable:
+
+chmod +x test_vars.sh
+ Explain Code
+Now run the script:
+
+./test_vars.sh
+ Explain Code
+You should see that the environment variable (MY_ENV_VAR) is accessible, while the shell variable (my_var) is not. This is because my_var was not exported, so child processes (like the script) don't know about it.
+
+To verify that MY_ENV_VAR is now an environment variable, we can use the env command again, but this time we'll filter the output using grep:
+
+env | grep MY_ENV_VAR
+ Explain Code
+You should see your new variable in the output.
+
+You can also check the value of your new environment variable directly:
+
+echo $MY_ENV_VAR
+ Explain Code
+Excellent! You've now created your first environment variable and seen how it differs from a shell variable. The key difference is that environment variables, created with export, are available to child processes, while shell variables are not.
+
+Environment variables and shell variables each have their own scope. When you export a variable (e.g., export MY_ENV_VAR="something"), it becomes available to any subprocess started from that shell (for example, a shell script run by that same shell). However, if you open a completely separate shell session, it does not inherit the variables from your current shell unless you specifically set them in a startup file (like .zshrc or .bashrc).
+
+In other words:
+
+A regular shell variable is visible only within the current session.
+An exported variable is available to child processes launched from that session.
+A variable set in a shell startup file (like .zshrc) is applied to all new sessions of that shell.
+You cannot directly read another user’s or another shell’s variables because each process maintains its own environment. If you start a new shell, it gets a copy of the parent’s exported variables but not variables set only in the original shell without export.
+
+We will learn how to set environment variables permanently in the following steps.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify viewing environment variables
+Verify creating new environment variable
+Verify creation and execution of test script
+Continue
+
+labby
+Labby
+Modifying the PATH Environment Variable
+The PATH variable is one of the most important environment variables in Linux. It tells the system where to look for executable files. Let's modify it to include a new directory.
+
+First, let's create a new directory where we might store custom scripts:
+
+mkdir ~/my_scripts
+ Explain Code
+This creates a directory called my_scripts in your home directory. The ~ symbol is a shortcut for your home directory path, which is /home/labex in this lab.
+
+Now, let's add this new directory to your PATH. We'll use the export command, but this time we're modifying an existing variable:
+
+export PATH="$PATH:$HOME/my_scripts"
+ Explain Code
+Let's break this down:
+
+$PATH is the current value of the PATH environment variable. We are using the existing value and adding to it.
+: is used to separate directories in the PATH. If you omit the colon, the shell will not be able to find executables in your added directory.
+$HOME is an environment variable that points to your home directory (again, /home/labex in our case).
+So, we're appending :$HOME/my_scripts to the existing PATH. This tells the system to look for executables in my_scripts after it searches the directories in the original PATH.
+Verify that the new directory has been added:
+
+echo $PATH
+ Explain Code
+You should see /home/labex/my_scripts at the end of the output. If it's not at the end, you may have modified it in a different way, which is ok, but you should still have the /home/labex/my_scripts path in your PATH.
+
+To test this, let's create a simple script in our new directory:
+
+cat << 'EOF' > ~/my_scripts/hello.sh
+#!/bin/bash
+echo "Hello from my custom script!"
+EOF
+ Explain Code
+This creates a shell script called hello.sh in the ~/my_scripts directory. The first line, #!/bin/bash tells the system that this is a bash script, allowing it to be executed as a program.
+
+Make the script executable:
+
+chmod +x ~/my_scripts/hello.sh
+ Explain Code
+The chmod +x command adds execute permissions to the script, allowing it to be run as a program. If you don't do this step, you'll get a "permission denied" error when you try to execute it.
+
+Now, you should be able to run this script from anywhere by just typing its name:
+
+hello.sh
+ Explain Code
+If everything worked correctly, you should see: Hello from my custom script!
+
+This works because we added the my_scripts directory to the PATH. When you type a command, the shell looks for an executable file with that name in each of the directories listed in the PATH, in order. By adding my_scripts to the PATH, we've told the shell to look there for executables as well.
+
+To demonstrate this, try changing to a different directory and running the script again:
+
+cd /tmp
+hello.sh
+ Explain Code
+You'll see that the script still runs, even though you're not in the directory where it's located. This is the power of the PATH variable - it allows you to run executables from anywhere in the system, as long as they're in a directory listed in the PATH.
+
+Great job! You've successfully modified the PATH environment variable and created a custom script that can be run from anywhere.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify directory creation
+Verify PATH modification
+Verify script creation
+Verify script execution from different directory
+Continue
+
+labby
+Labby
+Making Environment Variables Permanent
+The environment variables we've set will be lost when you close the terminal. To make them permanent, we need to add them to a shell configuration file. The exact file depends on which shell you're using.
+
+In this lab environment, we're using the Z shell (zsh), which is an extended version of the Bourne Shell (sh), with many improvements, including some features of Bash, ksh, and tcsh. Zsh has become increasingly popular and is now the default shell in macOS.
+
+If you were using Bash (which is still the default on many Linux distributions), you would modify .bashrc. However, since we're using Zsh, we'll modify .zshrc. It's very important to use the correct file. If you modify .bashrc while using zsh, the variables will not be set.
+
+Open the .zshrc file in your home directory with a text editor. We'll use nano, which is a simple terminal-based text editor:
+
+nano ~/.zshrc
+ Explain Code
+This command opens the ~/.zshrc file, where ~ is again a shortcut for your home directory /home/labex. If the .zshrc file doesn't exist, nano will create a new one. This file is executed every time you start a new terminal session.
+
+Scroll to the bottom of the file (you can use the arrow keys), and add the following lines:
+
+export MY_ENV_VAR="This is an environment variable"
+export PATH="$PATH:$HOME/my_scripts"
+ Explain Code
+Make sure to add these lines to the bottom of the file. Ensure the spelling and syntax are correct, especially that there are no spaces around the = sign.
+
+Save the file and exit the editor. In nano, you do this by pressing Ctrl+X, then Y (to save), then Enter.
+
+To apply these changes without restarting your terminal, use the source command:
+
+source ~/.zshrc
+ Explain Code
+The source command reads and executes commands from the file specified as its argument in the current shell environment. This is different than simply executing the file using bash ~/.zshrc, which would run the script in a new shell and not affect the current one. source runs it in the current shell so your changes take effect immediately. If you skip this step, your changes will not take effect in your current terminal, and you'll have to close and reopen it to see the changes.
+
+Now, these environment variables will be set every time you open a new terminal. This is incredibly useful for setting up your development environment consistently.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify .zshrc modification
+Verify sourcing .zshrc
+Continue
+
+labby
+Labby
+Understanding Important Environment Variables
+Linux has several built-in environment variables that are crucial for system operation. Let's explore some of them:
+
+HOME: Points to the home directory of the current user.
+
+echo $HOME
+ Explain Code
+USER: Contains the username of the current user.
+
+echo $USER
+ Explain Code
+SHELL: Specifies the user's default shell.
+
+echo $SHELL
+ Explain Code
+PWD: Stands for "Print Working Directory". It contains the path of the current directory.
+
+echo $PWD
+ Explain Code
+TERM: Specifies the type of terminal to emulate when running the shell.
+
+echo $TERM
+ Explain Code
+Understanding these variables can help you better navigate and control your Linux environment.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify viewing HOME variable
+Verify viewing USER variable
+Verify viewing SHELL variable
+Verify viewing PWD variable
+Verify viewing TERM variable
+Continue
+
+labby
+Labby
+Unsetting Environment Variables
+Sometimes, you may need to remove an environment variable. This is done using the unset command.
+
+First, let's check if our MY_ENV_VAR is still set:
+
+echo $MY_ENV_VAR
+ Explain Code
+You should see the value we set earlier.
+
+To unset (remove) this variable, use the unset command:
+
+unset MY_ENV_VAR
+ Explain Code
+Verify that the variable has been unset:
+
+echo $MY_ENV_VAR
+ Explain Code
+You should see no output, indicating that the variable no longer exists.
+
+You can also use the -v option with unset to ensure you're unsetting a variable and not a shell function:
+
+unset -v MY_ENV_VAR
+ Explain Code
+This will have the same result as just running unset MY_ENV_VAR.
+
+Remember, if you've added the variable to your .zshrc file, it will be recreated the next time you open a terminal or source the .zshrc file.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify unsetting environment variable
+Continue
+
+labby
+Labby
+Summary
+Congratulations! You've completed this comprehensive lab on Linux environment variables. Let's recap what you've learned:
+
+You created and accessed simple shell variables, understanding their scope.
+You learned about environment variables and how they differ from shell variables, particularly in their accessibility to child processes, and how the export command is key to this.
+You modified the important PATH variable to include a custom directory, allowing you to run scripts from anywhere in the system, and the importance of using the colon : to separate entries.
+You made environment variables permanent by adding them to .zshrc, understanding the difference between Bash and Zsh shell configurations, and the significance of using source to apply changes.
+You explored some of the most important built-in environment variables in Linux.
+Finally, you learned how to unset (remove) environment variables using the unset command.
+These skills are fundamental for Linux system administration and software development. Environment variables allow you to configure your system and applications flexibly. As you continue working with Linux, you'll find countless uses for environment variables in scripting, development, and system configuration.
+
+Remember, practice makes perfect. Try creating your own environment variables for different purposes, and explore how various applications and scripts use environment variables to control their behavior. Happy learning!
+
+Continue
+❓ ask
+💬 feedback
+Introduction
+Welcome to this hands-on lab about environment variables in Linux! Environment variables are dynamic values that can affect the behavior of running processes on a computer. They play a crucial role in system configuration and program execution. By mastering environment variables, you'll gain essential skills for Linux system administration and software development.
+
+In this lab, you'll learn how to create, view, modify, and delete environment variables. We'll also explore how to make these changes permanent and understand some of the most important built-in environment variables in Linux. Whether you're a beginner or looking to solidify your understanding, this lab will provide valuable hands-on experience.
+
+Let's get started!
+
+This is a Guided Lab, which provides step-by-step instructions to help you learn and practice. Follow the instructions carefully to complete each step and gain hands-on experience. Historical data shows that this is a beginner level lab with a 89% completion rate. It has received a 99% positive review rate from learners.
+labby
+Labby
+Great! Let me prepare the lab VM for you. While it's being set up, you can start reviewing the first step of this lab.
+
+labby
+Labby
+Understanding Variables in Linux
+Before we dive into environment variables, let's start with basic shell variables. This will help you understand the concept of variables in Linux.
+
+Open your terminal. You should be in the /home/labex/project directory. If not, you can change to this directory using the following command:
+
+cd /home/labex/project
+ Explain Code
+Now, let's create a simple shell variable. In Linux, you can create a variable by simply assigning a value to a name. Let's create a variable named my_var:
+
+my_var="Hello, Linux"
+ Explain Code
+Important Note: When assigning variables in Bash (and Zsh, which we're using in this lab), there should be no spaces around the equals sign (=). my_var = "Hello, Linux" or my_var= "Hello, Linux" will cause an error.
+
+To view the value of the variable, we use the echo command with a $ before the variable name. The $ tells the shell to substitute the value of the variable:
+
+echo $my_var
+ Explain Code
+You should see the output:
+
+Hello, Linux
+ Explain Code
+You can also use variables within other commands or assignments. For example:
+
+echo "The value of my_var is: $my_var"
+ Explain Code
+This will output: The value of my_var is: Hello, Linux
+
+Great job! You've just created and used your first shell variable. However, this variable is only available in the current shell session. If you open a new terminal window or tab, this variable won't be available there. This is where environment variables come in handy.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify variable creation and echo
+Continue
+
+labby
+Labby
+Great!
+It's time for the next step.
+
+labby
+Labby
+Introduction to Environment Variables
+Now that we understand basic variables, let's explore environment variables. Environment variables are variables that are available to any child process of the shell. This means they can be accessed by scripts and programs run from that shell.
+
+To view all current environment variables, use the env command:
+
+env
+ Explain Code
+This will display a long list of variables. Don't worry if you don't understand all of them yet - we'll cover some of the most important ones later.
+
+One of the most important environment variables is PATH. Let's take a look at it:
+
+echo $PATH
+ Explain Code
+The PATH variable lists directories where the system looks for executable programs. Each directory is separated by a colon (:).
+
+Now, let's create our own environment variable. We use the export command to create an environment variable:
+
+export MY_ENV_VAR="This is an environment variable"
+ Explain Code
+The export command makes the variable available to child processes. This is the key difference between shell variables and environment variables.
+
+To illustrate the difference, let's create a shell script that tries to access both a regular shell variable and an environment variable. We can do this using a heredoc with the cat command, which is a common way to write multi-line content to a file:
+
+cat << 'EOF' > test_vars.sh
+#!/bin/bash
+echo "Shell variable: $my_var"
+echo "Environment variable: $MY_ENV_VAR"
+EOF
+ Explain Code
+Make the script executable:
+
+chmod +x test_vars.sh
+ Explain Code
+Now run the script:
+
+./test_vars.sh
+ Explain Code
+You should see that the environment variable (MY_ENV_VAR) is accessible, while the shell variable (my_var) is not. This is because my_var was not exported, so child processes (like the script) don't know about it.
+
+To verify that MY_ENV_VAR is now an environment variable, we can use the env command again, but this time we'll filter the output using grep:
+
+env | grep MY_ENV_VAR
+ Explain Code
+You should see your new variable in the output.
+
+You can also check the value of your new environment variable directly:
+
+echo $MY_ENV_VAR
+ Explain Code
+Excellent! You've now created your first environment variable and seen how it differs from a shell variable. The key difference is that environment variables, created with export, are available to child processes, while shell variables are not.
+
+Environment variables and shell variables each have their own scope. When you export a variable (e.g., export MY_ENV_VAR="something"), it becomes available to any subprocess started from that shell (for example, a shell script run by that same shell). However, if you open a completely separate shell session, it does not inherit the variables from your current shell unless you specifically set them in a startup file (like .zshrc or .bashrc).
+
+In other words:
+
+A regular shell variable is visible only within the current session.
+An exported variable is available to child processes launched from that session.
+A variable set in a shell startup file (like .zshrc) is applied to all new sessions of that shell.
+You cannot directly read another user’s or another shell’s variables because each process maintains its own environment. If you start a new shell, it gets a copy of the parent’s exported variables but not variables set only in the original shell without export.
+
+We will learn how to set environment variables permanently in the following steps.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify viewing environment variables
+Verify creating new environment variable
+Verify creation and execution of test script
+Continue
+
+labby
+Labby
+Modifying the PATH Environment Variable
+The PATH variable is one of the most important environment variables in Linux. It tells the system where to look for executable files. Let's modify it to include a new directory.
+
+First, let's create a new directory where we might store custom scripts:
+
+mkdir ~/my_scripts
+ Explain Code
+This creates a directory called my_scripts in your home directory. The ~ symbol is a shortcut for your home directory path, which is /home/labex in this lab.
+
+Now, let's add this new directory to your PATH. We'll use the export command, but this time we're modifying an existing variable:
+
+export PATH="$PATH:$HOME/my_scripts"
+ Explain Code
+Let's break this down:
+
+$PATH is the current value of the PATH environment variable. We are using the existing value and adding to it.
+: is used to separate directories in the PATH. If you omit the colon, the shell will not be able to find executables in your added directory.
+$HOME is an environment variable that points to your home directory (again, /home/labex in our case).
+So, we're appending :$HOME/my_scripts to the existing PATH. This tells the system to look for executables in my_scripts after it searches the directories in the original PATH.
+Verify that the new directory has been added:
+
+echo $PATH
+ Explain Code
+You should see /home/labex/my_scripts at the end of the output. If it's not at the end, you may have modified it in a different way, which is ok, but you should still have the /home/labex/my_scripts path in your PATH.
+
+To test this, let's create a simple script in our new directory:
+
+cat << 'EOF' > ~/my_scripts/hello.sh
+#!/bin/bash
+echo "Hello from my custom script!"
+EOF
+ Explain Code
+This creates a shell script called hello.sh in the ~/my_scripts directory. The first line, #!/bin/bash tells the system that this is a bash script, allowing it to be executed as a program.
+
+Make the script executable:
+
+chmod +x ~/my_scripts/hello.sh
+ Explain Code
+The chmod +x command adds execute permissions to the script, allowing it to be run as a program. If you don't do this step, you'll get a "permission denied" error when you try to execute it.
+
+Now, you should be able to run this script from anywhere by just typing its name:
+
+hello.sh
+ Explain Code
+If everything worked correctly, you should see: Hello from my custom script!
+
+This works because we added the my_scripts directory to the PATH. When you type a command, the shell looks for an executable file with that name in each of the directories listed in the PATH, in order. By adding my_scripts to the PATH, we've told the shell to look there for executables as well.
+
+To demonstrate this, try changing to a different directory and running the script again:
+
+cd /tmp
+hello.sh
+ Explain Code
+You'll see that the script still runs, even though you're not in the directory where it's located. This is the power of the PATH variable - it allows you to run executables from anywhere in the system, as long as they're in a directory listed in the PATH.
+
+Great job! You've successfully modified the PATH environment variable and created a custom script that can be run from anywhere.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify directory creation
+Verify PATH modification
+Verify script creation
+Verify script execution from different directory
+Continue
+
+labby
+Labby
+Making Environment Variables Permanent
+The environment variables we've set will be lost when you close the terminal. To make them permanent, we need to add them to a shell configuration file. The exact file depends on which shell you're using.
+
+In this lab environment, we're using the Z shell (zsh), which is an extended version of the Bourne Shell (sh), with many improvements, including some features of Bash, ksh, and tcsh. Zsh has become increasingly popular and is now the default shell in macOS.
+
+If you were using Bash (which is still the default on many Linux distributions), you would modify .bashrc. However, since we're using Zsh, we'll modify .zshrc. It's very important to use the correct file. If you modify .bashrc while using zsh, the variables will not be set.
+
+Open the .zshrc file in your home directory with a text editor. We'll use nano, which is a simple terminal-based text editor:
+
+nano ~/.zshrc
+ Explain Code
+This command opens the ~/.zshrc file, where ~ is again a shortcut for your home directory /home/labex. If the .zshrc file doesn't exist, nano will create a new one. This file is executed every time you start a new terminal session.
+
+Scroll to the bottom of the file (you can use the arrow keys), and add the following lines:
+
+export MY_ENV_VAR="This is an environment variable"
+export PATH="$PATH:$HOME/my_scripts"
+ Explain Code
+Make sure to add these lines to the bottom of the file. Ensure the spelling and syntax are correct, especially that there are no spaces around the = sign.
+
+Save the file and exit the editor. In nano, you do this by pressing Ctrl+X, then Y (to save), then Enter.
+
+To apply these changes without restarting your terminal, use the source command:
+
+source ~/.zshrc
+ Explain Code
+The source command reads and executes commands from the file specified as its argument in the current shell environment. This is different than simply executing the file using bash ~/.zshrc, which would run the script in a new shell and not affect the current one. source runs it in the current shell so your changes take effect immediately. If you skip this step, your changes will not take effect in your current terminal, and you'll have to close and reopen it to see the changes.
+
+Now, these environment variables will be set every time you open a new terminal. This is incredibly useful for setting up your development environment consistently.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify .zshrc modification
+Verify sourcing .zshrc
+Continue
+
+labby
+Labby
+Understanding Important Environment Variables
+Linux has several built-in environment variables that are crucial for system operation. Let's explore some of them:
+
+HOME: Points to the home directory of the current user.
+
+echo $HOME
+ Explain Code
+USER: Contains the username of the current user.
+
+echo $USER
+ Explain Code
+SHELL: Specifies the user's default shell.
+
+echo $SHELL
+ Explain Code
+PWD: Stands for "Print Working Directory". It contains the path of the current directory.
+
+echo $PWD
+ Explain Code
+TERM: Specifies the type of terminal to emulate when running the shell.
+
+echo $TERM
+ Explain Code
+Understanding these variables can help you better navigate and control your Linux environment.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify viewing HOME variable
+Verify viewing USER variable
+Verify viewing SHELL variable
+Verify viewing PWD variable
+Verify viewing TERM variable
+Continue
+
+labby
+Labby
+Unsetting Environment Variables
+Sometimes, you may need to remove an environment variable. This is done using the unset command.
+
+First, let's check if our MY_ENV_VAR is still set:
+
+echo $MY_ENV_VAR
+ Explain Code
+You should see the value we set earlier.
+
+To unset (remove) this variable, use the unset command:
+
+unset MY_ENV_VAR
+ Explain Code
+Verify that the variable has been unset:
+
+echo $MY_ENV_VAR
+ Explain Code
+You should see no output, indicating that the variable no longer exists.
+
+You can also use the -v option with unset to ensure you're unsetting a variable and not a shell function:
+
+unset -v MY_ENV_VAR
+ Explain Code
+This will have the same result as just running unset MY_ENV_VAR.
+
+Remember, if you've added the variable to your .zshrc file, it will be recreated the next time you open a terminal or source the .zshrc file.
+
+Continue
+
+labby
+Labby
+Inspect Result
+Verify unsetting environment variable
+Continue
+
+labby
+Labby
+Summary
+Congratulations! You've completed this comprehensive lab on Linux environment variables. Let's recap what you've learned:
+
+You created and accessed simple shell variables, understanding their scope.
+You learned about environment variables and how they differ from shell variables, particularly in their accessibility to child processes, and how the export command is key to this.
+You modified the important PATH variable to include a custom directory, allowing you to run scripts from anywhere in the system, and the importance of using the colon : to separate entries.
+You made environment variables permanent by adding them to .zshrc, understanding the difference between Bash and Zsh shell configurations, and the significance of using source to apply changes.
+You explored some of the most important built-in environment variables in Linux.
+Finally, you learned how to unset (remove) environment variables using the unset command.
+These skills are fundamental for Linux system administration and software development. Environment variables allow you to configure your system and applications flexibly. As you continue working with Linux, you'll find countless uses for environment variables in scripting, development, and system configuration.
+
+Remember, practice makes perfect. Try creating your own environment variables for different purposes, and explore how various applications and scripts use environment variables to control their behavior. Happy learning!
+
+
